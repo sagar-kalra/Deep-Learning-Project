@@ -1,10 +1,6 @@
 import os
-import cv2 as cv
 from PIL import Image
-import resource
-import sys
-sys.setrecursionlimit(1500000000)
-resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+
 labels_train = os.listdir('./Training')
 labels_train = sorted(labels_train)
 print(labels_train)
@@ -18,6 +14,22 @@ for filename in labels_train:
         allowed_extension = 'ppm'
         if (img.split('.'))[1]==allowed_extension:
             path = './Training/{}/{}'.format(filename, img)
-            im = cv2.imread(path)
+            im = Image.open(path)
             temp_img.append(im)
     images_train.append(temp_img)
+labels_test = os.listdir('./Testing')
+labels_test = sorted(labels_test)
+print(labels_test)
+images_test = []
+temp=[]
+for filename in labels_test:
+    temp = os.listdir('./Testing/{}'.format(filename))
+    temp_img=[]
+    for img in temp:
+        img=str(img)
+        allowed_extension = 'ppm'
+        if (img.split('.'))[1]==allowed_extension:
+            path = './Testing/{}/{}'.format(filename, img)
+            im = Image.open(path)
+            temp_img.append(im)
+    images_test.append(temp_img)
