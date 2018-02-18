@@ -2,6 +2,9 @@ import os
 from PIL import Image
 import cv2
 import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten, Convolution2D, MaxPooling2D
+from keras.utils import np_utils
 
 dir_train = os.listdir('./Training')
 dir_train = sorted(dir_train)
@@ -23,8 +26,6 @@ for filename in dir_train:
             temp_label_train.append(filename)
             im = im.resize((28,28), Image.ANTIALIAS)
             im = np.array(im)
-            im = cv2.cvtColor(im,cv2.COLOR_RGB2GRAY)
-            im.reshape(28,28,1)
             temp_img_train.append(im)
 images_train = np.asarray(temp_img_train)
 labels_train = np.asarray(temp_label_train)
@@ -41,8 +42,66 @@ for filename in dir_test:
             im = Image.open(path)
             im = im.resize((28,28), Image.ANTIALIAS)
             im = np.array(im)
-            im = cv2.cvtColor(im,cv2.COLOR_RGB2GRAY)
             temp_img_test.append(im)
 images_test = np.asarray(temp_img_test)
 labels_test = np.asarray(temp_label_test)
+images_test = images_test/255
+images_train = images_train/255
+print(len(images_test))
+print(len(images_train))
+#images_train = images_train.reshape(images_train.shape[0], 28, 28,1)
+#images_test = images_test.reshape(images_test.shape[0], 28, 28, 1)
+images_test = images_test.astype('float32')
+images_train = images_train.astype('float32')
+print('Training Samples:- {}'.format(images_train.shape[0]))
+print('Testing Samples:- {}'.format(images_test.shape[0]))
+print('Input shape = {} * {}'.format(images_train.shape[1], images_train.shape[2]))
+int_dir_train = [x for x in range(len(dir_train))]
+print(int_dir_train)
+int_dir_test = [x for x in range(len(dir_test))]
+print(int_dir_test)
+int_dir_train = np_utils.to_categorical(int_dir_train, len(dir_train))
+int_dir_test = np_utils.to_categorical(int_dir_test, len(dir_test))
+print(len(int_dir_train))
+for i in range(2):
+    print(int_dir_train[i])
+print(len(int_dir_test))
 
+labels_train_int = []
+for i in range(len(labels_train)):
+    for j in range(len(dir_train)):
+        if labels_train[i]==dir_train[j]:
+            labels_train_int.append(int_dir_train[j])
+
+labels_test_int = []
+for i in range(len(labels_test)):
+    for j in range(len(dir_test)):
+        if labels_test[i]==dir_test[j]:
+            labels_test_int.append(int_dir_test[j])
+print(len(labels_train_int))
+print(len(images_train))
+model = Sequential()
+model.add(Convolution2D(64, kernel_size=(3, 3), activation='relu', input_shape=(28, 28, 3)))
+model.add(MaxPooling2D(pool_size=(2,2)))
+
+model.add(Convolution2D(64, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2)))
+
+model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2)))
+
+model.add(Flatten())
+model.add(Dense(63))
+model.add(Activation('relu'))
+model.add(Dropout(0.7))
+model.add(Activation('softmax'))
+
+model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+
+model.summary()
+
+history = model.fit(np.array(images_train), np.array(labels_train_int), batch_size=128, nb_epoch=20, verbose=1, validation_data=(np.array(images_test), np.array(labels_test_int)))
+
+score = model.evaluate(np.array(images_test), np.array(labels_test_int), verbose=0)
+print('Test score:', score[0])
+print('Test accuracy:', score[1])
