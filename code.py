@@ -5,6 +5,9 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, Convolution2D, MaxPooling2D
 from keras.utils import np_utils
+from keras.initializers import glorot_normal
+from keras.optimizers import Adam
+from keras.models import model_from_json
 
 dir_train = os.listdir('./Training')
 dir_train = sorted(dir_train)
@@ -23,6 +26,7 @@ for filename in dir_train:
         if (img.split('.'))[1]==allowed_extension:
             path = './Training/{}/{}'.format(filename, img)
             im = Image.open(path)
+            im = im.convert('RGB')
             temp_label_train.append(filename)
             im = im.resize((28,28), Image.ANTIALIAS)
             im = np.array(im)
@@ -40,6 +44,7 @@ for filename in dir_test:
             path = './Testing/{}/{}'.format(filename, img)
             temp_label_test.append(filename)
             im = Image.open(path)
+            im = im.convert('RGB')
             im = im.resize((28,28), Image.ANTIALIAS)
             im = np.array(im)
             temp_img_test.append(im)
@@ -81,10 +86,11 @@ for i in range(len(labels_test)):
 print(len(labels_train_int))
 print(len(images_train))
 model = Sequential()
-model.add(Convolution2D(64, kernel_size=(3, 3), activation='relu', input_shape=(28, 28, 3)))
-model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu', kernel_initializer=glorot_normal(seed=None) , input_shape=(28, 28, 3)))
+model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
 
-model.add(Convolution2D(64, kernel_size=(3, 3), activation='relu'))
+model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2,2)))
 
 model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
@@ -92,16 +98,33 @@ model.add(MaxPooling2D(pool_size=(2,2)))
 
 model.add(Flatten())
 model.add(Dense(63))
-model.add(Activation('relu'))
-model.add(Dropout(0.7))
+model.add(Dropout(0.2))
 model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 
 model.summary()
 
-history = model.fit(np.array(images_train), np.array(labels_train_int), batch_size=128, nb_epoch=20, verbose=1, validation_data=(np.array(images_test), np.array(labels_test_int)))
+history = model.fit(np.array(images_train), np.array(labels_train_int), batch_size=64, nb_epoch=10, verbose=1, validation_data=(np.array(images_test), np.array(labels_test_int)))
 
 score = model.evaluate(np.array(images_test), np.array(labels_test_int), verbose=0)
 print('Test score:', score[0])
 print('Test accuracy:', score[1])
+
+im = Image.open('./index.jpeg')
+im = im.convert('RGB')
+im = im.resize((28,28), Image.ANTIALIAS)
+im = np.array(im)
+x = np.expand_dims(im, axis=0)
+
+out1 = model.predict(x)
+y = np.argmax(out1)
+for i in range(len(dir_test)):
+    if i==y:
+        print(dir_train[i])
+model_json = model.to_json()
+with open("model.json", "w") as json_file:
+    json_file.write(model_json)
+# serialize weights to HDF5
+model.save_weights("model.h5")
+print("Saved model to disk")
