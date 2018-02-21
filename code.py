@@ -86,7 +86,10 @@ for i in range(len(labels_test)):
 print(len(labels_train_int))
 print(len(images_train))
 model = Sequential()
-model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu', kernel_initializer=glorot_normal(seed=None) , input_shape=(28, 28, 3)))
+model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu', kernel_initializer=glorot_normal(seed=None) , use_bias = True, bias_initializer='zeros', input_shape=(28, 28, 3)))
+model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
 model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
 model.add(Convolution2D(128, kernel_size=(3, 3), activation='relu'))
 
@@ -101,15 +104,15 @@ model.add(Dense(63))
 model.add(Dropout(0.2))
 model.add(Activation('softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 model.summary()
 
-history = model.fit(np.array(images_train), np.array(labels_train_int), batch_size=64, nb_epoch=10, verbose=1, validation_data=(np.array(images_test), np.array(labels_test_int)))
+history = model.fit(np.array(images_train), np.array(labels_train_int), batch_size=64, nb_epoch=20, verbose=1, validation_data=(np.array(images_test), np.array(labels_test_int)))
 
 score = model.evaluate(np.array(images_test), np.array(labels_test_int), verbose=0)
-print('Test score:', score[0])
-print('Test accuracy:', score[1])
+print('Test score: ', score[0])
+print('Test accuracy: ', score[1])
 
 im = Image.open('./index.jpeg')
 im = im.convert('RGB')
