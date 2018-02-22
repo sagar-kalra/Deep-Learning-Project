@@ -18,6 +18,7 @@ model = model_from_json(loaded_model_json)
 # load weights into new model
 model.load_weights("model.h5")
 print("Loaded model from disk")
+model.summary()
 temp_label_test = []
 temp_img_test =[]
 dir_test = os.listdir('./Testing')
@@ -53,7 +54,7 @@ print('Test accuracy:', score[1])
 print('Do you want to capture your own image(1) or want to test it on a custom image(2). Choose 1 or 2.')
 entry=int(input())
 if entry==2:
-    im = Image.open('./index.ppm')
+    im = Image.open('./sample.ppm')
     im = im.convert('RGB')
     im = im.resize((28,28), Image.ANTIALIAS)
     im = np.array(im)
