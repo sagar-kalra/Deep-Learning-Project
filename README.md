@@ -16,7 +16,7 @@
 
 ### Using the project
 
-* #### git clone www.github.com/<your-username>/Deep-Learning-Project
+* #### git clone www.github.com/(your-username)/Deep-Learning-Project
 * #### Training:-
   * ##### ```ulimit -n 10000```
   * ##### ```python3 Train.py ```
