@@ -21,7 +21,7 @@ temp_img_test = []
 temp_label_train = []
 temp_label_test = []
 for filename in dir_train:
-    temp = os.listdir('./Training/{}'.format(filename))
+    temp = os.listdir('Deep-Learning-Project/Training/{}'.format(filename))
     for img in temp:
         img=str(img)
         allowed_extension = 'ppm'
