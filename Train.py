@@ -11,7 +11,7 @@ from keras.optimizers import Adam
 from keras.models import model_from_json
 from keras.callbacks import TensorBoard
 
-dir_train = os.listdir('./Training')
+dir_train = os.listdir('Deep-Learning-Project/Training')
 dir_train = sorted(dir_train)
 images_train = []
 temp=[]
@@ -26,7 +26,7 @@ for filename in dir_train:
         img=str(img)
         allowed_extension = 'ppm'
         if (img.split('.'))[1]==allowed_extension:
-            path = './Training/{}/{}'.format(filename, img)
+            path = 'Deep-Learning-Project/Training/{}/{}'.format(filename, img)
             im = Image.open(path)
             im = im.convert('RGB')
             temp_label_train.append(filename)
@@ -35,15 +35,15 @@ for filename in dir_train:
             temp_img_train.append(im)
 images_train = np.asarray(temp_img_train)
 labels_train = np.asarray(temp_label_train)
-dir_test = os.listdir('./Testing')
+dir_test = os.listdir('Deep-Learning-Project/Testing')
 dir_test = sorted(dir_test)
 for filename in dir_test:
-    temp = os.listdir('./Testing/{}'.format(filename))
+    temp = os.listdir('Deep-Learning-Project/Testing/{}'.format(filename))
     for img in temp:
         img=str(img)
         allowed_extension = 'ppm'
         if (img.split('.'))[1]==allowed_extension:
-            path = './Testing/{}/{}'.format(filename, img)
+            path = 'Deep-Learning-Project/Testing/{}/{}'.format(filename, img)
             temp_label_test.append(filename)
             im = Image.open(path)
             im = im.convert('RGB')
