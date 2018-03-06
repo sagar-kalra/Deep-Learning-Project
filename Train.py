@@ -111,8 +111,8 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 
 model.summary()
 
-tbCallBack = keras.callbacks.TensorBoard(log_dir='./Graph', histogram_freq=0, write_graph=True, write_images=True)
-history = model.fit(np.array(images_train), np.array(labels_train_int), batch_size=64, nb_epoch=20, verbose=1, validation_data=(np.array(images_test), np.array(labels_test_int)), callbacks=[tbCallBack])
+#tbCallBack = keras.callbacks.TensorBoard(log_dir='./Graph', histogram_freq=0, write_graph=True, write_images=True)
+history = model.fit(np.array(images_train), np.array(labels_train_int), batch_size=64, nb_epoch=20, verbose=1, validation_data=(np.array(images_test), np.array(labels_test_int))
 
 score = model.evaluate(np.array(images_test), np.array(labels_test_int), verbose=0)
 print('Test score: ', score[0])
