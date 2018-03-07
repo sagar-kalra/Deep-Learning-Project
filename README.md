@@ -1,5 +1,7 @@
 # Deep-Learning-Project For Traffic Sign Recoginition
 
+## Dataset can be downloaded from https://www.dropbox.com/s/5fzosssyyiw2ved/datasets.zip?dl=0 .
+
 ### The user should be able to :-
 * #### Train model using Train.py
 * #### Test using Test.py by using sample image or capture image using camera.
